@@ -4,22 +4,23 @@ from aoc import get_lines
 
 
 def part_1(lines: List[str]) -> int:
-    agg = 0
-    for line in lines:
-        digits = [int(i) for i in filter(lambda c: c.isdigit(), line)]
-        agg += 10 * digits[0] + digits[-1]
-    return agg
+    return solve(lines, False)
 
 
 def part_2(lines: List[str]) -> int:
+    return solve(lines, True)
+
+
+def solve(lines: List[str], part2: bool) -> int:
     agg = 0
     for line in lines:
         digits = []
         for i, c in enumerate(line):
             if c.isdigit():
                 digits.append(int(c))
-            elif num := words2num(i, line):
-                digits.append(num)
+            elif part2:
+                if num := words2num(i, line):
+                    digits.append(num)
         agg += 10 * digits[0] + digits[-1]
     return agg
 

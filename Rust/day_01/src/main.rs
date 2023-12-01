@@ -1,22 +1,21 @@
 fn part1(input: &str) -> u32 {
-    input
-        .lines()
-        .map(|line| {
-            line.chars()
-                .filter_map(|c| c.to_digit(10))
-                .collect::<Vec<u32>>()
-        })
-        .map(|digits| digits.get(0).unwrap() * 10 + digits.last().unwrap())
-        .sum()
+    solve(input, false)
 }
 
 fn part2(input: &str) -> u32 {
+    solve(input, true)
+}
+
+fn solve(input: &str, part2: bool) -> u32 {
     input
         .lines()
         .map(|line| {
             line.chars()
                 .enumerate()
-                .filter_map(|(i, c)| words_to_num(i, &line).or(c.to_digit(10)))
+                .filter_map(|(i, c)| {
+                    c.to_digit(10)
+                        .or(if part2 { words_to_num(i, &line) } else { None })
+                })
                 .collect::<Vec<u32>>()
         })
         .map(|digits| digits.get(0).unwrap() * 10 + digits.last().unwrap())
