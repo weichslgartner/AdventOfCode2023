@@ -1,4 +1,3 @@
-
 fn part1(input: &str) -> u32 {
     input
         .lines()
@@ -11,10 +10,21 @@ fn part1(input: &str) -> u32 {
         .sum()
 }
 
-use std::collections::HashMap;
+fn part2(input: &str) -> u32 {
+    input
+        .lines()
+        .map(|line| {
+            line.chars()
+                .enumerate()
+                .filter_map(|(i, c)| words_to_num(i, &line).or(c.to_digit(10)))
+                .collect::<Vec<u32>>()
+        })
+        .map(|digits| digits.get(0).unwrap() * 10 + digits.last().unwrap())
+        .sum()
+}
 
 fn words_to_num(i: usize, line: &str) -> Option<u32> {
-    let replace_dict: HashMap<&str, u32> = [
+    let lut = vec![
         ("one", 1),
         ("two", 2),
         ("three", 3),
@@ -24,32 +34,17 @@ fn words_to_num(i: usize, line: &str) -> Option<u32> {
         ("seven", 7),
         ("eight", 8),
         ("nine", 9),
-    ]
-    .iter()
-    .cloned()
-    .collect();
+    ];
 
-    for (old, &new) in replace_dict.iter() {
+    for (old, new) in lut.iter() {
         if let Some(substr) = line.get(i..i + old.len()) {
             if substr == *old {
-                return Some(new);
+                return Some(*new);
             }
         }
     }
 
     None
-}
-
-fn part2(input: &str) -> u32 {
-        input
-        .lines()
-        .map(|line| {
-            line.chars().enumerate()
-                .filter_map(|(i,c)|  words_to_num(i,&line).or(c.to_digit(10) ))
-                .collect::<Vec<u32>>()
-        })
-        .map(|digits| digits.get(0).unwrap() * 10 + digits.last().unwrap())
-        .sum()
 }
 
 fn main() {
