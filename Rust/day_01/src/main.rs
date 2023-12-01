@@ -14,7 +14,7 @@ fn solve(input: &str, part2: bool) -> u32 {
                 .enumerate()
                 .filter_map(|(i, c)| {
                     c.to_digit(10)
-                        .or(if part2 { words_to_num(i, &line) } else { None })
+                        .or(part2.then(|| words_to_num(i, line)).flatten() )
                 })
                 .collect::<Vec<u32>>()
         })
