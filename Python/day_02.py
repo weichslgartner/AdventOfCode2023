@@ -25,11 +25,7 @@ def part_1(games: Dict[int, List[Dict[str, int]]]) -> int:
 
 
 def is_valid(constraints: Dict[str,int], game: List[Dict[str, int]]) -> bool:
-    for draw in game:
-        for color, num in draw.items():
-            if num > constraints[color]:
-                return False
-    return True
+    return all(all(num <= constraints[color] for color, num in draw.items()) for draw in game)
 
 
 def part_2(games: Dict[int, List[Dict[str, int]]]) -> int:
