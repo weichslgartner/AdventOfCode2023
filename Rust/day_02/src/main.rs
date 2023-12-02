@@ -13,8 +13,7 @@ fn parse_input(input: &str) -> Result<HashMap<u32, Vec<HashMap<String, u32>>>> {
                 draw.split(',')
                     .map(|rev_set| {
                         let (num, color) = rev_set.trim().split_once(' ').ok_or(anyhow!("Invalid draw format"))?;
-                        let num: u32 = num.parse()?;
-                        Ok((color.to_owned(), num))
+                        Ok((color.to_owned(), num.parse()?))
                     })
                     .collect::<Result<Vec<(String, u32)>>>()
                     .map(|vec| vec.into_iter().collect())
