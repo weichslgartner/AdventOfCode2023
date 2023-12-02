@@ -23,7 +23,7 @@ fn parse_input(input: &str) -> HashMap<u32, Vec<HashMap<String, u32>>> {
     games
 }
 
-fn is_valid(constraints: &HashMap<String, u32>, game: &Vec<HashMap<String, u32>>) -> bool {
+fn is_valid(constraints: &HashMap<String, u32>, game: &[HashMap<String, u32>]) -> bool {
     game.iter().all(|draw| {
         draw.iter()
             .all(|(color, num)| *num <= *constraints.get(color).unwrap())
