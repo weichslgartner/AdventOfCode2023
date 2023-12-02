@@ -36,13 +36,11 @@ fn part_1(games: &HashMap<u32, Vec<HashMap<String, u32>>>) -> u32 {
         ("green".to_string(), 13),
         ("blue".to_string(), 14),
     ]
-    .iter()
-    .cloned()
+    .into_iter()
     .collect::<HashMap<String, u32>>();
     games
         .iter()
-        .filter(|(_, game)| is_valid(&constraints, game))
-        .map(|(game_id, _)| game_id)
+        .filter_map(|(game_id, game)| is_valid(&constraints, game).then_some(game_id))
         .sum()
 }
 

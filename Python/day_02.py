@@ -1,8 +1,10 @@
+from typing import Dict, List
+
 from aoc import get_lines
 from math import prod
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> Dict[int, List[Dict[str, int]]]:
     games = {}
     for line in lines:
         game_id, draws = line.split(":", maxsplit=1)
@@ -17,12 +19,12 @@ def parse_input(lines):
     return games
 
 
-def part_1(games):
+def part_1(games: Dict[int, List[Dict[str, int]]]) -> int:
     constraints = {'red': 12, 'green': 13, 'blue': 14}
     return sum(game_id for game_id, _ in filter(lambda x: is_valid(constraints, x[1]), games.items()))
 
 
-def is_valid(constraints, game):
+def is_valid(constraints: Dict[str,int], game: List[Dict[str, int]]) -> bool:
     for draw in game:
         for color, num in draw.items():
             if num > constraints[color]:
@@ -30,8 +32,8 @@ def is_valid(constraints, game):
     return True
 
 
-def part_2(games):
-    return sum(calc_power(game) for _, game in games.items())
+def part_2(games: Dict[int, List[Dict[str, int]]]) -> int:
+    return sum(map(calc_power, games.values()))
 
 
 def calc_power(game):
