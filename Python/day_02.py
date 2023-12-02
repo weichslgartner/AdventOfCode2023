@@ -24,7 +24,7 @@ def part_1(games: Dict[int, List[Dict[str, int]]]) -> int:
     return sum(game_id for game_id, _ in filter(lambda x: is_valid(constraints, x[1]), games.items()))
 
 
-def is_valid(constraints: Dict[str,int], game: List[Dict[str, int]]) -> bool:
+def is_valid(constraints: Dict[str, int], game: List[Dict[str, int]]) -> bool:
     return all(all(num <= constraints[color] for color, num in draw.items()) for draw in game)
 
 
