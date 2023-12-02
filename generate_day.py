@@ -49,18 +49,18 @@ if __name__ == '__main__':
 
 
 def rust_stub(day: int) -> str:
-    return f"""fn part1(input: &str) -> &str {{
+    return f"""fn part_1(input: &str) -> &str {{
     input
 }}
 
-fn part2(input: &str) -> &str {{
+fn part_2(input: &str) -> &str {{
     input
 }}
 
 fn main() {{
     let input = include_str!("../../../inputs/input_{day:02d}.txt");
-    println!("Part 1: {{}}", part1(&input));
-    println!("Part 2: {{}}", part2(&input));
+    println!("Part 1: {{}}", part_1(&input));
+    println!("Part 2: {{}}", part_2(&input));
 }}
 
 """

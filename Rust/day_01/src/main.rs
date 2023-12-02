@@ -1,8 +1,8 @@
-fn part1(input: &str) -> u32 {
+fn part_1(input: &str) -> u32 {
     solve(input, false)
 }
 
-fn part2(input: &str) -> u32 {
+fn part_2(input: &str) -> u32 {
     solve(input, true)
 }
 
@@ -48,6 +48,6 @@ fn words_to_num(i: usize, line: &str) -> Option<u32> {
 
 fn main() {
     let input = include_str!("../../../inputs/input_01.txt");
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    println!("Part 1: {}", part_1(&input));
+    println!("Part 2: {}", part_2(&input));
 }
