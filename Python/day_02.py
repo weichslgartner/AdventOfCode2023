@@ -19,11 +19,7 @@ def parse_input(lines):
 
 def part_1(games):
     constraints = {'red': 12, 'green': 13, 'blue': 14}
-    allowed_sum = 0
-    for game_id, game in games.items():
-        if is_valid(constraints, game):
-            allowed_sum += game_id
-    return allowed_sum
+    return sum(game_id for game_id, _ in filter(lambda x: is_valid(constraints, x[1]), games.items()))
 
 
 def is_valid(constraints, game):
@@ -35,15 +31,16 @@ def is_valid(constraints, game):
 
 
 def part_2(games):
-    min_sum = 0
-    for _, game in games.items():
-        min_conf = {}
-        for draw in game:
-            for color, num in draw.items():
-                if color not in min_conf or min_conf[color] < num:
-                    min_conf[color] = num
-        min_sum += prod(min_conf.values())
-    return min_sum
+    return sum(calc_power(game) for _, game in games.items())
+
+
+def calc_power(game):
+    min_conf = {}
+    for draw in game:
+        for color, num in draw.items():
+            if color not in min_conf or min_conf[color] < num:
+                min_conf[color] = num
+    return prod(min_conf.values())
 
 
 def main():
