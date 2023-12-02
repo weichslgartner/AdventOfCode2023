@@ -32,7 +32,7 @@ def part_2(games: Dict[int, List[Dict[str, int]]]) -> int:
     return sum(map(calc_power, games.values()))
 
 
-def calc_power(game):
+def calc_power(game: List[Dict[str, int]]) -> int:
     min_conf = {}
     for draw in game:
         for color, num in draw.items():
