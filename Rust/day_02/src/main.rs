@@ -1,27 +1,31 @@
 use std::collections::HashMap;
 
-fn parse_input(input: &str) -> HashMap<u32, Vec<HashMap<String, u32>>> {
+use anyhow::{Result, anyhow};
+
+fn parse_input(input: &str) -> Result<HashMap<u32, Vec<HashMap<String, u32>>>> {
     let mut games = HashMap::new();
     for line in input.lines() {
-        let parts: Vec<&str> = line.splitn(2, ':').collect();
-        let game_id: u32 = parts[0].splitn(2, ' ').last().unwrap().parse().unwrap();
-        let draws: Vec<HashMap<String, u32>> = parts[1]
+        let (game_id, parts) = line.split_once(':').ok_or(anyhow!("Invalid input format"))?;
+        let game_id: u32 = game_id.splitn(2, ' ').last().ok_or(anyhow!("Invalid game ID format"))?.parse()?;
+        let draws: Vec<HashMap<String, u32>> = parts
             .split(';')
             .map(|draw| {
                 draw.split(',')
                     .map(|rev_set| {
-                        let rev_parts: Vec<&str> = rev_set.splitn(3, ' ').collect();
-                        let color = rev_parts[2].to_string();
-                        let num: u32 = rev_parts[1].parse().unwrap();
-                        (color, num)
+                        let (num, color) = rev_set.trim().split_once(' ').ok_or(anyhow!("Invalid draw format"))?;
+                        let num: u32 = num.parse()?;
+                        Ok((color.to_owned(), num))
                     })
-                    .collect::<HashMap<String, u32>>()
+                    .collect::<Result<Vec<(String, u32)>>>()
+                    .map(|vec| vec.into_iter().collect())
             })
-            .collect();
+            .collect::<Result<Vec<HashMap<String, u32>>>>()?;
+
         games.insert(game_id, draws);
     }
-    games
+    Ok(games)
 }
+
 
 fn is_valid(constraints: &HashMap<String, u32>, game: &[HashMap<String, u32>]) -> bool {
     game.iter().all(|draw| {
@@ -64,7 +68,7 @@ fn part_2(games: &HashMap<u32, Vec<HashMap<String, u32>>>) -> u32 {
 
 fn main() {
     let input = include_str!("../../../inputs/input_02.txt");
-    let games = parse_input(input);
+    let games = parse_input(input).unwrap();
     println!("Part 1: {}", part_1(&games));
     println!("Part 2: {}", part_2(&games));
 }

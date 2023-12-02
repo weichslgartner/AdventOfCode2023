@@ -13,7 +13,7 @@ def parse_input(lines: List[str]) -> Dict[int, List[Dict[str, int]]]:
         for draw in draws.split(";"):
             rev = {}
             for rev_set in draw.split(","):
-                _, num, color = rev_set.split(" ", maxsplit=2)
+                num, color = rev_set.strip().split(" ", maxsplit=1)
                 rev[color] = int(num)
             games[game_id].append(rev)
     return games
