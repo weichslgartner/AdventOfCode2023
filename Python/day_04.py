@@ -1,10 +1,9 @@
-from collections import deque
-from queue import Queue
+from typing import List, Dict, Iterable
 
 from aoc import get_lines, extract_all_ints
 
 
-def parse_input(lines):
+def parse_input(lines: List[str]) -> Dict[int, int]:
     scratchcards = {}
     for line in lines:
         tmp, yours = line.split("|", maxsplit=1)
@@ -15,20 +14,20 @@ def parse_input(lines):
     return scratchcards
 
 
-def part_1(scratchcards):
+def part_1(scratchcards: Iterable[int]) -> int:
     return sum(map(lambda x: 2 ** (x - 1),
                    filter(lambda x: x > 0, scratchcards)))
 
 
-def part_2(scratchcards):
-    queue = deque(scratchcards.items())
+def part_2(scratchcards: Dict[int, int]) -> int:
+    stack = list(scratchcards.items())
     points = 0
-    while not len(queue) == 0:
-        id_, num_winning = queue.popleft()
+    while not len(stack) == 0:
+        id_, num_winning = stack.pop()
         points += 1
         if num_winning > 0:
             for i in range(1, num_winning + 1):
-                queue.append((id_ + i, scratchcards[id_ + i]))
+                stack.append((id_ + i, scratchcards[id_ + i]))
     return points
 
 
