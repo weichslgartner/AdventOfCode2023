@@ -18,7 +18,7 @@ fn solve(input: &str, part2: bool) -> u32 {
                 })
                 .collect::<Vec<u32>>()
         })
-        .map(|digits| digits.get(0).unwrap() * 10 + digits.last().unwrap())
+        .map(|digits| digits.first().unwrap() * 10 + digits.last().unwrap())
         .sum()
 }
 
@@ -48,6 +48,6 @@ fn words_to_num(i: usize, line: &str) -> Option<u32> {
 
 fn main() {
     let input = include_str!("../../../inputs/input_01.txt");
-    println!("Part 1: {}", part_1(&input));
-    println!("Part 2: {}", part_2(&input));
+    println!("Part 1: {}", part_1(input));
+    println!("Part 2: {}", part_2(input));
 }

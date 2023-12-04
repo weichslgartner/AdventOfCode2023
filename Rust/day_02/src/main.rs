@@ -2,8 +2,10 @@ use std::collections::HashMap;
 
 use anyhow::{Result, anyhow};
 
-fn parse_input(input: &str) -> Result<HashMap<u32, Vec<HashMap<String, u32>>>> {
-    let mut games = HashMap::new();
+type GameT = Vec<HashMap<String, u32>>;
+
+fn parse_input(input: &str) -> Result<Vec<(u32, GameT)>> {
+    let mut games = Vec::new();
     for line in input.lines() {
         let (game_id, parts) = line.split_once(':').ok_or(anyhow!("Invalid input format"))?;
         let game_id: u32 = game_id.splitn(2, ' ').last().ok_or(anyhow!("Invalid game ID format"))?.parse()?;
@@ -20,7 +22,7 @@ fn parse_input(input: &str) -> Result<HashMap<u32, Vec<HashMap<String, u32>>>> {
             })
             .collect::<Result<Vec<HashMap<String, u32>>>>()?;
 
-        games.insert(game_id, draws);
+        games.push((game_id, draws));
     }
     Ok(games)
 }
@@ -33,7 +35,7 @@ fn is_valid(constraints: &HashMap<String, u32>, game: &[HashMap<String, u32>]) -
     })
 }
 
-fn part_1(games: &HashMap<u32, Vec<HashMap<String, u32>>>) -> u32 {
+fn part_1(games: &[(u32, GameT)]) -> u32 {
     let constraints = [
         ("red".to_string(), 12),
         ("green".to_string(), 13),
@@ -47,7 +49,7 @@ fn part_1(games: &HashMap<u32, Vec<HashMap<String, u32>>>) -> u32 {
         .sum()
 }
 
-fn calc_power(game: &Vec<HashMap<String, u32>>) -> u32 {
+fn calc_power(game: &[HashMap<String, u32>]) -> u32 {
     game.iter()
         .flat_map(|draw| draw.iter())
         .fold(HashMap::new(), |mut min_conf, (color, num)| {
@@ -61,8 +63,8 @@ fn calc_power(game: &Vec<HashMap<String, u32>>) -> u32 {
         .product()
 }
 
-fn part_2(games: &HashMap<u32, Vec<HashMap<String, u32>>>) -> u32 {
-    games.values().map(calc_power).sum()
+fn part_2(games: &[(u32, GameT)]) -> u32 {
+    games.iter().map(|(_,game)| calc_power(game)).sum()
 }
 
 fn main() {
