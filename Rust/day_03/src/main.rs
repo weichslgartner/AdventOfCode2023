@@ -47,14 +47,14 @@ fn parse_input(lines: Vec<&str>) -> (HashMap<Point, String>, HashMap<Point, char
     (nums, symbols)
 }
 
-fn has_sym_neighbor(p: Point, length: usize, symbols: &HashSet<Point>) -> bool {
+fn has_sym_neighbor(p: Point, length: usize, symbols: &HashMap<Point, char>) -> bool {
     (p.y as isize - 1..=p.y as isize + 1).any(|y| {
         (p.x as isize - 1..=p.x as isize + length as isize)
-            .any(|x| symbols.contains(&Point::new(x as usize, y as usize)))
+            .any(|x| symbols.contains_key(&Point::new(x as usize, y as usize)))
     })
 }
 
-fn part_1(nums: &HashMap<Point, String>, symbols: &HashSet<Point>) -> usize {
+fn part_1(nums: &HashMap<Point, String>, symbols: &HashMap<Point, char>) -> usize {
     nums.iter()
         .filter(|&(p, numb)| has_sym_neighbor(*p, numb.len(), symbols))
         .map(|(_, numb)| numb.parse::<usize>().unwrap())
@@ -72,9 +72,9 @@ fn get_gear(p: Point, nums: &HashMap<Point, String>) -> Option<usize> {
     (gear.len() == 2).then_some(gear.iter().product())
 }
 
-fn part_2(nums: &HashMap<Point, String>, symbols_dict: &HashMap<Point, char>) -> usize {
+fn part_2(nums: &HashMap<Point, String>, symbols: &HashMap<Point, char>) -> usize {
     let nums2 = expand_nums(nums);
-    symbols_dict
+    symbols
         .iter()
         .filter(|&(_, &c)| c == '*')
         .flat_map(|(&p, _)| get_gear(p, &nums2))
@@ -95,10 +95,7 @@ fn main() {
     let lines: Vec<&str> = include_str!("../../../inputs/input_03.txt")
         .lines()
         .collect();
-    let (nums, symbols_dict) = parse_input(lines);
-    println!(
-        "Part 1: {}",
-        part_1(&nums, &symbols_dict.keys().cloned().collect())
-    );
-    println!("Part 2: {}", part_2(&nums, &symbols_dict));
+    let (nums, symbols) = parse_input(lines);
+    println!("Part 1: {}", part_1(&nums, &symbols));
+    println!("Part 2: {}", part_2(&nums, &symbols));
 }
