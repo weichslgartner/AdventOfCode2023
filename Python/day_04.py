@@ -20,15 +20,11 @@ def part_1(scratchcards: Iterable[int]) -> int:
 
 
 def part_2(scratchcards: Dict[int, int]) -> int:
-    stack = list(scratchcards.items())
-    points = 0
-    while not len(stack) == 0:
-        id_, num_winning = stack.pop()
-        points += 1
-        if num_winning > 0:
-            for i in range(1, num_winning + 1):
-                stack.append((id_ + i, scratchcards[id_ + i]))
-    return points
+    count = {k: 1 for k in scratchcards.keys()}
+    for id_, num_winning in sorted(scratchcards.items(), key=lambda x: x[0]):
+        for i in range(1, num_winning + 1):
+            count[id_ + i] += count[id_]
+    return sum(count.values())
 
 
 def main():

@@ -1,10 +1,10 @@
 use anyhow::{anyhow, Context, Result};
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::iter::FromIterator;
 
-fn parse_input(input: &str) -> Result<HashMap<usize, usize>> {
-    let mut scratchcards = HashMap::new();
+fn parse_input(input: &str) -> Result<Vec<(usize, usize)>> {
+    let mut scratchcards = Vec::new();
     for line in input.lines() {
         let (tmp, yours) = line.split_once('|').context("Failed to split input")?;
         let (id_str, winning) = tmp.split_once(':').context("Failed to split input")?;
@@ -17,31 +17,28 @@ fn parse_input(input: &str) -> Result<HashMap<usize, usize>> {
         let yours_numbers = HashSet::<_>::from_iter(
             extract_all_ints(yours).context("Failed to extract your numbers")?,
         );
-        scratchcards.insert(id, (winning_numbers.intersection(&yours_numbers)).count());
+        scratchcards.push((id, (winning_numbers.intersection(&yours_numbers)).count()));
     }
     Ok(scratchcards)
 }
 
-fn part_1(scratchcards: impl Iterator<Item = usize>) -> usize {
+fn part_1(scratchcards: &[(usize, usize)]) -> usize {
     scratchcards
-        .filter(|&x| x > 0)
+        .iter()
+        .map(|(_, winning)| winning)
+        .filter(|x| *x > &0)
         .map(|x| 2_usize.pow((x - 1) as u32))
         .sum()
 }
 
-fn part_2(scratchcards: HashMap<usize, usize>) -> usize {
-    let mut stack = Vec::from_iter(scratchcards.clone());
-    let mut points = 0;
-    while !stack.is_empty() {
-        let (id, num_winning) = stack.pop().unwrap();
-        points += 1;
-        if num_winning > 0 {
-            for i in 1..=num_winning {
-                stack.push((id + i, scratchcards[&(id + i)]));
-            }
+fn part_2(scratchcards: &[(usize, usize)]) -> usize {
+    let mut cards = vec![1; scratchcards.len()];
+    for (id, num_winning) in scratchcards.iter() {
+        for i in 1..(*num_winning + 1) {
+            cards[id - 1 + i] += cards[id - 1];
         }
     }
-    points
+    cards.iter().sum()
 }
 
 fn extract_all_ints(s: &str) -> Result<Vec<usize>> {
@@ -55,6 +52,6 @@ fn extract_all_ints(s: &str) -> Result<Vec<usize>> {
 fn main() {
     let lines = include_str!("../../../inputs/input_04.txt");
     let scratchcards = parse_input(lines).unwrap();
-    println!("Part 1: {}", part_1(scratchcards.values().copied()));
-    println!("Part 2: {}", part_2(scratchcards));
+    println!("Part 1: {}", part_1(&scratchcards));
+    println!("Part 2: {}", part_2(&scratchcards));
 }
