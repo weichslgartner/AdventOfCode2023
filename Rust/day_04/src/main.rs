@@ -1,4 +1,5 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
+
 
 use std::collections::HashSet;
 use std::iter::FromIterator;
@@ -8,14 +9,12 @@ fn parse_input(input: &str) -> Result<Vec<(usize, usize)>> {
     for line in input.lines() {
         let (tmp, yours) = line.split_once('|').context("Failed to split input")?;
         let (id_str, winning) = tmp.split_once(':').context("Failed to split input")?;
-        let id: usize = *extract_all_ints(id_str)?
-            .first()
-            .ok_or(anyhow!("Failed to extract ID"))?;
-        let winning_numbers = HashSet::<_>::from_iter(
-            extract_all_ints(winning).context("Failed to extract winning numbers")?,
+        let id: usize = *id_str.split(' ').flat_map(|x| x.parse()).collect::<Vec<_>>().last().ok_or(anyhow!("Failed parsing id"))?;
+        let winning_numbers = HashSet::<usize>::from_iter(
+            winning.trim().split(' ').flat_map(|x| x.trim().parse())
         );
-        let yours_numbers = HashSet::<_>::from_iter(
-            extract_all_ints(yours).context("Failed to extract your numbers")?,
+        let yours_numbers = HashSet::<usize>::from_iter(
+            yours.trim().split(' ').flat_map(|x| x.trim().parse())
         );
         scratchcards.push((id, (winning_numbers.intersection(&yours_numbers)).count()));
     }
@@ -39,14 +38,6 @@ fn part_2(scratchcards: &[(usize, usize)]) -> usize {
         }
     }
     cards.iter().sum()
-}
-
-fn extract_all_ints(s: &str) -> Result<Vec<usize>> {
-    let mut result: Vec<_> = Vec::new();
-    for cap in regex::Regex::new(r"(\d+)").unwrap().captures_iter(s) {
-        result.push(cap[1].parse::<usize>().context("Failed to parse integer")?);
-    }
-    Ok(result)
 }
 
 fn main() {

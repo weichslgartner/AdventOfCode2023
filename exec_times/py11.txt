@@ -3,30 +3,30 @@ Part 1: 56506
 Part 2: 56017
 
 real	0m0,066s
-user	0m0,062s
+user	0m0,061s
 sys	0m0,004s
 
 Python/day_02.py
 Part 1: 2551
 Part 2: 62811
 
-real	0m0,028s
+real	0m0,024s
 user	0m0,020s
-sys	0m0,008s
+sys	0m0,004s
 
 Python/day_03.py
 Part 1: 526404
 Part 2: 84399773
 
-real	0m0,035s
-user	0m0,028s
-sys	0m0,008s
+real	0m0,036s
+user	0m0,032s
+sys	0m0,004s
 
 Python/day_04.py
 Part 1: 21158
 Part 2: 6050769
 
-real	0m0,026s
+real	0m0,027s
 user	0m0,023s
 sys	0m0,004s
 
@@ -34,7 +34,7 @@ Python/day_05.py
 Part 1: 218513636
 Part 2: 81956384
 
-real	0m0,036s
-user	0m0,032s
-sys	0m0,004s
+real	0m0,035s
+user	0m0,035s
+sys	0m0,000s
 
