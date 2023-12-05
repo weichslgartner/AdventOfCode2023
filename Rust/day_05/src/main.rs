@@ -157,23 +157,27 @@ fn part_2(seeds_raw: &[usize], all_maps: &[Vec<CMap>]) -> Option<usize> {
     seeds_raw
         .iter()
         .tuples()
-        .map(|(&seed_begin, &width)| {
-            all_maps
-                .iter()
-                .fold(
-                    vec![Interval::new(seed_begin, seed_begin + width - 1)],
-                    |acc_intervals, stage| {
-                        acc_intervals
-                            .iter()
-                            .flat_map(|interval| convert_ranges(*interval, stage))
-                            .collect()
-                    },
-                )
-                .iter()
-                .map(|x| x.begin)
-                .min()
+        .flat_map(|(&seed_begin, &width)| {
+            min_per_seed_range(all_maps, seed_begin, width)
         })
-        .min()?
+        .min()
+}
+
+fn min_per_seed_range(all_maps: &[Vec<CMap>], seed_begin: usize, width: usize) -> Option<usize> {
+    all_maps
+        .iter()
+        .fold(
+            vec![Interval::new(seed_begin, seed_begin + width - 1)],
+            |acc_intervals, stage| {
+                acc_intervals
+                    .iter()
+                    .flat_map(|interval| convert_ranges(*interval, stage))
+                    .collect()
+            },
+        )
+        .iter()
+        .map(|x| x.begin)
+        .min()
 }
 
 fn main() {
