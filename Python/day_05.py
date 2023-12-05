@@ -60,6 +60,7 @@ def convert_rages(interval: Interval, maps: List[CMap]):
     for i, cmap in enumerate(maps):
         next_cmap = maps[i + 1] if i < len(maps) - 1 else None
         assert interval.begin <= interval.end
+        # left overlap
         if cmap.end >= interval.begin >= cmap.begin:
             if cmap.end >= interval.end:
                 target.append(
@@ -68,7 +69,6 @@ def convert_rages(interval: Interval, maps: List[CMap]):
             else:
                 target.append(Interval(cmap.target + interval.begin - cmap.begin, cmap.target + cmap.end - cmap.begin))
                 interval.begin = cmap.end + 1
-
         # right side overlaps
         elif cmap.begin <= interval.end <= cmap.end:
             target.append(Interval(cmap.target, cmap.target + interval.end - cmap.begin))

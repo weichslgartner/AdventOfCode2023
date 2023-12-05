@@ -50,7 +50,7 @@ def get_gear(p: Point, nums: Dict[Point, str]) -> int:
 
 
 def part_2(nums: Dict[Point, str], symbols_dict: Dict[Point, str]) -> int:
-    return sum(get_gear(p, expand_nums(nums)) for p, _ in filter(lambda x: x[1] == "*", symbols_dict.items()))
+    return sum(get_gear(p, nums) for p, _ in filter(lambda x: x[1] == "*", symbols_dict.items()))
 
 
 def expand_nums(nums):
@@ -65,7 +65,7 @@ def main():
     lines = get_lines("input_03.txt")
     nums, symbols_dict = parse_input(lines)
     print("Part 1:", part_1(nums, symbols_dict.keys()))
-    print("Part 2:", part_2(nums, symbols_dict))
+    print("Part 2:", part_2(expand_nums(nums), symbols_dict))
 
 
 if __name__ == '__main__':
