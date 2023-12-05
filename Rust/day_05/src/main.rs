@@ -40,7 +40,6 @@ fn parse_input(input_str: &str) -> (Vec<usize>, Vec<Vec<CMap>>) {
                 seeds = ints;
             } else if ints.is_empty() {
                 if !translation_maps.is_empty() {
-                  //  println!("<<<{:?}>>>", translation_maps);
                     translation_maps.sort_by_key(|x: &CMap| x.begin);
                     all_maps.push(translation_maps);
                 }
@@ -55,19 +54,15 @@ fn parse_input(input_str: &str) -> (Vec<usize>, Vec<Vec<CMap>>) {
         translation_maps.sort_by_key(|x| x.begin);
         all_maps.push(translation_maps.clone());
     }
-    //println!("{:?}==={:?}", seeds, all_maps);
     (seeds, all_maps)
 }
 
 fn convert_ranges(interval: Interval, maps: &[CMap]) -> Vec<Interval> {
     let mut target = Vec::new();
     let mut interval = interval;
-
     for (i, cmap) in maps.iter().enumerate() {
         let next_cmap = maps.get(i + 1);
-
         assert!(interval.begin <= interval.end);
-
         // left overlap
         if cmap.end >= interval.begin && interval.begin >= cmap.begin {
             if cmap.end >= interval.end {
@@ -115,7 +110,6 @@ fn convert_ranges(interval: Interval, maps: &[CMap]) -> Vec<Interval> {
             return target;
         }
     }
-
     target.push(interval);
     if target.is_empty() {
         vec![interval]
@@ -153,14 +147,11 @@ fn part_1(seeds: &[usize], all_maps: &[Vec<CMap>]) -> usize {
 
     for &seed in seeds {
         let mut location = seed;
-
         for stage in all_maps {
             location = binary_search(location, stage);
         }
-
         best = cmp::min(location, best);
     }
-
     best
 }
 
@@ -198,7 +189,6 @@ fn part_2(seeds_raw: &[usize], all_maps: &[Vec<CMap>]) -> usize {
 fn main() {
     let input = include_str!("../../../inputs/input_05.txt");
     let (seeds, all_maps) = parse_input(input);
-
     println!("Part 1: {}", part_1(&seeds, &all_maps));
     println!("Part 2: {}", part_2(&seeds, &all_maps));
 }
