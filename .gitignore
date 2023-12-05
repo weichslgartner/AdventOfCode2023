@@ -15,6 +15,9 @@ Cargo.lock
 # caches
 **/__pycache__/
 
+# jupyter
+**/.ipynb*/
+
 # IDEs
 .idea
 .vscode
