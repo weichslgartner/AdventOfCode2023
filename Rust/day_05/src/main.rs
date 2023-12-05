@@ -1,4 +1,4 @@
-use std::cmp;
+use itertools::Itertools;
 
 #[derive(Debug, Copy, Clone)]
 struct CMap {
@@ -32,17 +32,11 @@ fn parse_input(input_str: &str) -> (Vec<usize>, Vec<Vec<CMap>>) {
 
     for (i, block) in input_str.split("\n\n").enumerate() {
         for line in block.split('\n') {
-            let ints: Vec<usize> = line
-                .split_whitespace()
-                .filter_map(|s| s.parse().ok())
-                .collect();
+            let ints: Vec<usize> = line.split_whitespace().flat_map(|s| s.parse()).collect();
             if i == 0 {
                 seeds = ints;
             } else if ints.is_empty() {
-                if !translation_maps.is_empty() {
-                    translation_maps.sort_by_key(|x: &CMap| x.begin);
-                    all_maps.push(translation_maps);
-                }
+                sort_and_push(translation_maps, &mut all_maps);
                 translation_maps = Vec::new();
                 continue;
             } else {
@@ -50,11 +44,15 @@ fn parse_input(input_str: &str) -> (Vec<usize>, Vec<Vec<CMap>>) {
             }
         }
     }
-    if !translation_maps.is_empty() {
-        translation_maps.sort_by_key(|x| x.begin);
-        all_maps.push(translation_maps.clone());
-    }
+    sort_and_push(translation_maps, &mut all_maps);
     (seeds, all_maps)
+}
+
+fn sort_and_push(mut translation_maps: Vec<CMap>, all_maps: &mut Vec<Vec<CMap>>) {
+    if !translation_maps.is_empty() {
+        translation_maps.sort_by_key(|x: &CMap| x.begin);
+        all_maps.push(translation_maps);
+    }
 }
 
 fn convert_ranges(interval: Interval, maps: &[CMap]) -> Vec<Interval> {
@@ -65,12 +63,14 @@ fn convert_ranges(interval: Interval, maps: &[CMap]) -> Vec<Interval> {
         assert!(interval.begin <= interval.end);
         // left overlap
         if cmap.end >= interval.begin && interval.begin >= cmap.begin {
+            // complete overlap
             if cmap.end >= interval.end {
                 target.push(Interval::new(
                     cmap.target + interval.begin - cmap.begin,
                     cmap.target + interval.end - cmap.begin,
                 ));
                 return target;
+            // partial overlap
             } else {
                 target.push(Interval::new(
                     cmap.target + interval.begin - cmap.begin,
@@ -105,6 +105,7 @@ fn convert_ranges(interval: Interval, maps: &[CMap]) -> Vec<Interval> {
                 target.push(interval);
                 return target;
             }
+        // finished
         } else {
             target.push(interval);
             return target;
@@ -121,7 +122,6 @@ fn convert_ranges(interval: Interval, maps: &[CMap]) -> Vec<Interval> {
 fn binary_search(location: usize, maps: &[CMap]) -> usize {
     let mut low = 0;
     let mut high = maps.len() - 1;
-
     while low <= high {
         let m = (low + high) / 2;
         let cmap = &maps[m];
@@ -129,7 +129,6 @@ fn binary_search(location: usize, maps: &[CMap]) -> usize {
         if cmap.begin <= location && location <= cmap.end {
             return cmap.target + location - cmap.begin;
         }
-
         if cmap.end < location {
             low = m + 1;
         } else if cmap.begin > location {
@@ -143,52 +142,43 @@ fn binary_search(location: usize, maps: &[CMap]) -> usize {
 }
 
 fn part_1(seeds: &[usize], all_maps: &[Vec<CMap>]) -> usize {
-    let mut best = usize::MAX;
-
-    for &seed in seeds {
-        let mut location = seed;
-        for stage in all_maps {
-            location = binary_search(location, stage);
-        }
-        best = cmp::min(location, best);
-    }
-    best
+    seeds
+        .iter()
+        .map(|&seed| {
+            all_maps
+                .iter()
+                .fold(seed, |location, stage| binary_search(location, stage))
+        })
+        .min()
+        .unwrap()
 }
 
-fn part_2(seeds_raw: &[usize], all_maps: &[Vec<CMap>]) -> usize {
-    let mut best = usize::MAX;
-
-    for seeds in seeds_raw.chunks(2) {
-        let seed_begin = seeds[0];
-        let width = seeds[1];
-        let mut intervals = vec![Interval::new(seed_begin, seed_begin + width - 1)];
-
-        for stage in all_maps {
-            let mut new_intervals = Vec::new();
-
-            for interval in &intervals {
-                new_intervals.extend(convert_ranges(*interval, stage));
-            }
-
-            intervals = new_intervals;
-        }
-
-        best = cmp::min(
-            intervals
+fn part_2(seeds_raw: &[usize], all_maps: &[Vec<CMap>]) -> Option<usize> {
+    seeds_raw
+        .iter()
+        .tuples()
+        .map(|(&seed_begin, &width)| {
+            all_maps
+                .iter()
+                .fold(
+                    vec![Interval::new(seed_begin, seed_begin + width - 1)],
+                    |acc_intervals, stage| {
+                        acc_intervals
+                            .iter()
+                            .flat_map(|interval| convert_ranges(*interval, stage))
+                            .collect()
+                    },
+                )
                 .iter()
                 .map(|x| x.begin)
                 .min()
-                .unwrap_or(usize::MAX),
-            best,
-        );
-    }
-
-    best
+        })
+        .min()?
 }
 
 fn main() {
     let input = include_str!("../../../inputs/input_05.txt");
     let (seeds, all_maps) = parse_input(input);
     println!("Part 1: {}", part_1(&seeds, &all_maps));
-    println!("Part 2: {}", part_2(&seeds, &all_maps));
+    println!("Part 2: {}", part_2(&seeds, &all_maps).unwrap());
 }

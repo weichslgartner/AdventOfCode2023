@@ -9,12 +9,12 @@ fn parse_input(input: &str) -> Result<Vec<(usize, usize)>> {
     for line in input.lines() {
         let (tmp, yours) = line.split_once('|').context("Failed to split input")?;
         let (id_str, winning) = tmp.split_once(':').context("Failed to split input")?;
-        let id: usize = *id_str.split(' ').flat_map(|x| x.parse()).collect::<Vec<_>>().last().ok_or(anyhow!("Failed parsing id"))?;
+        let id: usize = *id_str.split_whitespace().flat_map(|x| x.parse()).collect::<Vec<_>>().last().ok_or(anyhow!("Failed parsing id"))?;
         let winning_numbers = HashSet::<usize>::from_iter(
-            winning.trim().split(' ').flat_map(|x| x.trim().parse())
+            winning.split_whitespace().flat_map(|x| x.trim().parse())
         );
         let yours_numbers = HashSet::<usize>::from_iter(
-            yours.trim().split(' ').flat_map(|x| x.trim().parse())
+            yours.split_whitespace().flat_map(|x| x.trim().parse())
         );
         scratchcards.push((id, (winning_numbers.intersection(&yours_numbers)).count()));
     }
