@@ -1,37 +1,37 @@
 ~/githubprojects/AdventOfCode2023 ~/githubprojects/AdventOfCode2023
-    Finished release [optimized] target(s) in 0.15s
+    Finished release [optimized] target(s) in 0.00s
 Part 1: 56506
 Part 2: 56017
-
-real	0m0,006s
-user	0m0,000s
-sys	0m0,004s
-
-    Finished release [optimized] target(s) in 0.13s
-Part 1: 2551
-Part 2: 62811
-
-real	0m0,003s
-user	0m0,001s
-sys	0m0,000s
-
-    Finished release [optimized] target(s) in 0.13s
-Part 1: 526404
-Part 2: 84399773
-
-real	0m0,003s
-user	0m0,000s
-sys	0m0,002s
-
-    Finished release [optimized + debuginfo] target(s) in 0.14s
-Part 1: 21158
-Part 2: 6050769
 
 real	0m0,003s
 user	0m0,002s
 sys	0m0,000s
 
-    Finished release [optimized] target(s) in 0.13s
+    Finished release [optimized] target(s) in 0.01s
+Part 1: 2551
+Part 2: 62811
+
+real	0m0,003s
+user	0m0,002s
+sys	0m0,000s
+
+    Finished release [optimized] target(s) in 0.00s
+Part 1: 526404
+Part 2: 84399773
+
+real	0m0,004s
+user	0m0,002s
+sys	0m0,000s
+
+    Finished release [optimized + debuginfo] target(s) in 0.01s
+Part 1: 21158
+Part 2: 6050769
+
+real	0m0,003s
+user	0m0,000s
+sys	0m0,002s
+
+    Finished release [optimized] target(s) in 0.00s
 Part 1: 218513636
 Part 2: 81956384
 
@@ -39,13 +39,12 @@ real	0m0,002s
 user	0m0,001s
 sys	0m0,000s
 
-   Compiling day_06 v0.1.0 (/home/andreas/githubprojects/AdventOfCode2023/Rust/day_06)
-    Finished release [optimized] target(s) in 0.47s
+    Finished release [optimized] target(s) in 0.00s
 Part 1: 1710720
 Part 2: 35349468
 
 real	0m0,001s
-user	0m0,000s
-sys	0m0,001s
+user	0m0,001s
+sys	0m0,000s
 
 ~/githubprojects/AdventOfCode2023

@@ -19,24 +19,20 @@ fn parse_input(input: &str) -> Option<(Vec<Race>, Vec<Race>)> {
     let (times, distances): (Vec<&str>, Vec<&str>) = input
         .lines()
         .map(|line| {
-            let (_, nums) = line.split_once(':').unwrap();
-            nums.split_whitespace().collect::<Vec<&str>>()
+            line.split_once(':')
+                .unwrap()
+                .1
+                .split_whitespace()
+                .collect::<Vec<&str>>()
         })
         .collect_tuple()?;
     Some((
         zip(&times, &distances)
-            .map(|(t, d)| Race {
-                time: t.parse().unwrap(),
-                distance: d.parse().unwrap(),
-            })
+            .map(|(&t, &d)| Race::from((t.to_string(), d.to_string())))
             .collect(),
         vec![Race::from(zip(times, distances).fold(
             ("".to_string(), "".to_string()),
-            |(mut time, mut distance), (t, d)| {
-                time += t;
-                distance += d;
-                (time, distance)
-            },
+            |(time_acc, distance_acc), (t, d)| (time_acc + t, distance_acc + d),
         ))],
     ))
 }
