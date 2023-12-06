@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use rayon::prelude::*;
 
 #[derive(Debug, Copy, Clone)]
 struct CMap {
@@ -144,22 +145,23 @@ fn binary_search(location: usize, maps: &[CMap]) -> usize {
 fn part_1(seeds: &[usize], all_maps: &[Vec<CMap>]) -> usize {
     seeds
         .iter()
-        .map(|&seed| {
-            all_maps
-                .iter()
-                .fold(seed, |location, stage| binary_search(location, stage))
-        })
+        .map(|seed| transform_seed(all_maps, seed))
         .min()
         .unwrap()
 }
+
+fn transform_seed(all_maps: &[Vec<CMap>], seed: &usize) -> usize {
+    all_maps
+        .iter()
+        .fold(*seed, |location, stage| binary_search(location, stage))
+}
+
 
 fn part_2(seeds_raw: &[usize], all_maps: &[Vec<CMap>]) -> Option<usize> {
     seeds_raw
         .iter()
         .tuples()
-        .flat_map(|(&seed_begin, &width)| {
-            min_per_seed_range(all_maps, seed_begin, width)
-        })
+        .flat_map(|(&seed_begin, &width)| min_per_seed_range(all_maps, seed_begin, width))
         .min()
 }
 
@@ -184,5 +186,23 @@ fn main() {
     let input = include_str!("../../../inputs/input_05.txt");
     let (seeds, all_maps) = parse_input(input);
     println!("Part 1: {}", part_1(&seeds, &all_maps));
-    println!("Part 2: {}", part_2(&seeds, &all_maps).unwrap());
+    if cfg!(feature = "brute-force"){
+        println!("Part 2: {}", brute_force(&seeds, &all_maps).unwrap()); //brute force version takes
+    }else{
+        println!("Part 2: {}", part_2(&seeds, &all_maps).unwrap());
+    }
+    //
+}
+
+
+fn brute_force(seeds_raw: &[usize], all_maps: &[Vec<CMap>]) -> Option<usize> {
+    let ranges: Vec<(&usize, &usize)> = seeds_raw.iter().tuples().collect();
+    ranges
+        .par_iter()
+        .flat_map(|(&start, &length)| {
+            (start..=start + length)
+                .map(|seed| transform_seed(all_maps, &seed))
+                .min()
+        })
+        .min()
 }

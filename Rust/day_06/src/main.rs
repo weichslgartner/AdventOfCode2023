@@ -37,7 +37,6 @@ fn parse_input(input: &str) -> Option<(Vec<Race>, Vec<Race>)> {
     ))
 }
 
-#[allow(dead_code)]
 fn brute_force(races: &[Race]) -> usize {
     let mut points: usize = 1;
     for race in races {
@@ -75,6 +74,12 @@ fn solve_quadratic(race: &Race) -> usize {
 fn main() {
     let input = include_str!("../../../inputs/input_06.txt");
     let (races, race2) = parse_input(input).unwrap();
-    println!("Part 1: {}", part_1(&races));
-    println!("Part 2: {}", part_2(&race2));
+    if !cfg!(feature = "brute-force"){
+        println!("Part 1: {}", part_1(&races));
+        println!("Part 2: {}", part_2(&race2));
+    }else{
+        println!("Part 1: {}", brute_force(&races));
+        println!("Part 2: {}", brute_force(&race2));
+    } 
+
 }

@@ -32,7 +32,7 @@ def solve_quadratic_eq(race: Race) -> int:
     discriminant = race.time ** 2 - 4.0 * race.distance
     solution1 = (-race.time + sqrt(discriminant)) / (-2.0)
     solution2 = (-race.time - sqrt(discriminant)) / (-2.0)
-    return int((ceil(solution2 - 1.0) - floor(solution1 + 1.0)) + 1)
+    return int(ceil(solution2 - 1.0) - floor(solution1 + 1.0)) + 1
 
 
 def part_1(races: List[Race]) -> int:

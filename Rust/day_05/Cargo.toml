@@ -8,4 +8,8 @@ authors = ["weichslgartner <weichslgartner@gmail.com>"]
 
 [dependencies]
 itertools = "0.12.0"
+rayon = "1.8.0"
 
+[features]
+default = []
+brute-force = []
