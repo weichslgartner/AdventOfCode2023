@@ -19,7 +19,7 @@ class Race:
 
 def parse_input(lines: List[str]) -> Tuple[List[Race], List[Race]]:
     t_d = list(zip(*(line.split(':', 1)[1].split() for line in lines)))
-    races = [Race(float(t), float(d)) for t, d in t_d]
+    races = [Race.from_str(t, d) for t, d in t_d]
     race2 = Race.from_str(*reduce(lambda acc, x: (acc[0] + x[0], acc[1] + x[1]), t_d, ("", "")))
     return races, [race2]
 
