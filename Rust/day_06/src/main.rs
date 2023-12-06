@@ -6,6 +6,15 @@ struct Race {
     distance: usize,
 }
 
+impl From<(String, String)> for Race {
+    fn from(tup: (String, String)) -> Self {
+        Race {
+            time: tup.0.parse().unwrap(),
+            distance: tup.1.parse().unwrap(),
+        }
+    }
+}
+
 fn parse_input(input: &str) -> (Vec<Race>, Vec<Race>) {
     let mut times: Vec<&str> = vec![];
     let mut distances: Vec<&str> = vec![];
@@ -20,54 +29,52 @@ fn parse_input(input: &str) -> (Vec<Race>, Vec<Race>) {
         };
     }
 
-    let mut result = vec![];
-    let mut time_2: String = "".to_string();
-    let mut distance_2: String = "".to_string();
-
-    for (t, d) in zip(times, distances) {
-        result.push(Race {
+    let result: Vec<Race> = zip(times, distances)
+        .map(|(t, d)| Race {
             time: t.parse().unwrap(),
             distance: d.parse().unwrap(),
-        });
-        time_2 += t;
-        distance_2 += d;
-    }
+        })
+        .collect();
+
     (
+        vec![Race::from(result.iter().fold(
+            ("".to_string(), "".to_string()),
+            |(mut time, mut distance), x| {
+                time += &x.time.to_string();
+                distance += &x.distance.to_string();
+                (time, distance)
+            },
+        ))],
         result,
-        vec![Race {
-            time: time_2.parse().unwrap(),
-            distance: distance_2.parse().unwrap(),
-        }],
     )
 }
 
-fn part_1(races: &Vec<Race>) -> usize {
+fn part_1(races: &[Race]) -> usize {
     solve(races)
 }
 
-fn part_2(races: &Vec<Race>) -> usize {
+fn part_2(races: &[Race]) -> usize {
     solve(races)
 }
 
-fn solve(races: &Vec<Race>) -> usize {
-    let mut points = 1;
-    for race in races {
-        let a = -1.0;
-        let b = race.time as f64;
-        let c = -1.0 * race.distance as f64;
-        let discriminant = b.powi(2) - 4.0 * a * c;
-        if discriminant >= 0.0 {
+fn solve(races: &[Race]) -> usize {
+    races
+        .iter()
+        .map(|race| {
+            let a = -1.0;
+            let b = race.time as f64;
+            let c = -1.0 * race.distance as f64;
+            let discriminant = b.powi(2) - 4.0 * a * c;
             let solution1 = (-b + discriminant.sqrt()) / (2.0 * a);
             let solution2 = (-b - discriminant.sqrt()) / (2.0 * a);
-            points *= ((solution2 - 1.0).ceil() - (solution1 + 1.0).floor()) as usize + 1;
-        }
-    }
-    points
+            ((solution2 - 1.0).ceil() - (solution1 + 1.0).floor()) as usize + 1
+        })
+        .product()
 }
 
 fn main() {
     let input = include_str!("../../../inputs/input_06.txt");
-    let (races,race2) = parse_input(input);
+    let (race2, races) = parse_input(input);
     println!("Part 1: {}", part_1(&races));
     println!("Part 2: {}", part_2(&race2));
 }
