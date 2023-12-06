@@ -20,8 +20,8 @@ class Race:
 def parse_input(lines: List[str]) -> Tuple[List[Race], List[Race]]:
     t_d = list(zip(*(line.split(':', 1)[1].split() for line in lines)))
     races = [Race.from_str(t, d) for t, d in t_d]
-    race2 = Race.from_str(*reduce(lambda acc, x: (acc[0] + x[0], acc[1] + x[1]), t_d, ("", "")))
-    return races, [race2]
+    races2 = [Race.from_str(*reduce(lambda acc, x: (acc[0] + x[0], acc[1] + x[1]), t_d, ("", "")))]
+    return races, races2
 
 
 def solve(races: List[Race]) -> int:
@@ -45,9 +45,9 @@ def part_2(races: List[Race]) -> int:
 
 def main():
     lines = get_lines("input_06.txt")
-    races, race2 = parse_input(lines)
+    races, races2 = parse_input(lines)
     print("Part 1:", part_1(races))
-    print("Part 2:", part_2(race2))
+    print("Part 2:", part_2(races2))
 
 
 if __name__ == '__main__':
