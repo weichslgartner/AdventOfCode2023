@@ -41,6 +41,22 @@ fn parse_input(input: &str) -> Option<(Vec<Race>, Vec<Race>)> {
     ))
 }
 
+#[allow(dead_code)]
+fn brute_force(races: &[Race]) -> usize {
+    let mut points: usize = 1;
+    for race in races {
+        let mut wins = 0;
+        for i in 0..=race.time as usize {
+            let distance = (race.time as usize - i) * i;
+            if distance > race.distance as usize {
+                wins += 1;
+            }
+        }
+        points *= wins;
+    }
+    points
+}
+
 fn part_1(races: &[Race]) -> usize {
     solve(races)
 }
