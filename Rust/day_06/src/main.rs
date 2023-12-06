@@ -66,18 +66,14 @@ fn part_2(races: &[Race]) -> usize {
 }
 
 fn solve(races: &[Race]) -> usize {
-    races
-        .iter()
-        .map(|race| {
-            let a = -1.0;
-            let b = race.time;
-            let c = -1.0 * race.distance;
-            let discriminant = b.powi(2) - 4.0 * a * c;
-            let solution1 = (-b + discriminant.sqrt()) / (2.0 * a);
-            let solution2 = (-b - discriminant.sqrt()) / (2.0 * a);
-            ((solution2 - 1.0).ceil() - (solution1 + 1.0).floor()) as usize + 1
-        })
-        .product()
+    races.iter().map(solve_quadratic).product()
+}
+
+fn solve_quadratic(race: &Race) -> usize {
+    let discriminant = race.time.powi(2) - 4.0 * race.distance;
+    let solution1 = (-race.time + discriminant.sqrt()) / (-2.0);
+    let solution2 = (-race.time - discriminant.sqrt()) / (-2.0);
+    ((solution2 - 1.0).ceil() - (solution1 + 1.0).floor()) as usize + 1
 }
 
 fn main() {
