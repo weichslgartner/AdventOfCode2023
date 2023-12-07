@@ -18,14 +18,7 @@ order_dict2 = {k: i for i, k in enumerate(reversed(order_val2))}
 
 
 def parse_input(lines):
-    hand_bids = []
-    for line in lines:
-        hand, bid = line.split()
-        hand_count = Counter(hand)
-        bid = int(bid)
-        hand_bids.append(Hand(hand, hand_count, bid))
-        # print((hand,hand_count,bid))
-    return hand_bids
+    return [Hand(hand, Counter(hand), int(bid)) for hand, bid in map(str.split, lines)]
 
 
 def get_highest(hand: Counter, part2=False):
@@ -36,7 +29,7 @@ def get_highest(hand: Counter, part2=False):
     if 'J' in hand.keys() and part2:
         for mc in hand.most_common():
             if mc[0] != 'J':
-                most_com = mc[1] +  hand['J']
+                most_com = mc[1] + hand['J']
     assert most_com <= 5
     if most_com == 5:
         return 6
@@ -112,4 +105,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
