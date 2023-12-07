@@ -30,6 +30,7 @@ def get_highest(hand: Counter, part2=False):
         for mc in hand.most_common():
             if mc[0] != 'J':
                 most_com = mc[1] + hand['J']
+                break
     assert most_com <= 5
     if most_com == 5:
         return 6
