@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from functools import reduce
+from math import prod, sqrt, ceil, floor
 from typing import List, Tuple
 
 from aoc import get_lines
-
-from math import prod, sqrt, ceil, floor
 
 
 @dataclass
