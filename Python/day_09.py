@@ -18,7 +18,7 @@ def part_2(oasis: List[List[int]]) -> int:
 
 def calc_history(cur: List[int]) -> List[List[int]]:
     history = [cur]
-    while not all(c == 0 for c in cur):
+    while any(c != 0 for c in cur):
         cur = [j - i for i, j in zip(cur, cur[1:])]
         history.append(cur)
     return history
