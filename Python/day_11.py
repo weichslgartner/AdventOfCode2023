@@ -35,7 +35,7 @@ def calc_sum_shortest_paths(point2galaxy: Set[Point]) -> int:
 
 
 def part_1(point2galaxy: Set[Point], pmax: Point) -> int:
-    return calc_sum_shortest_paths(expand_universe(pmax, point2galaxy.copy()))
+    return calc_sum_shortest_paths(expand_universe(pmax, point2galaxy))
 
 
 def part_2(point2galaxy: Set[Point], pmax: Point) -> int:
