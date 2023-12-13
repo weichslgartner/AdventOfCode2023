@@ -1,5 +1,5 @@
 import functools
-from typing import List
+from typing import List, Tuple
 
 from aoc import get_lines
 
@@ -8,7 +8,7 @@ def parse_input(lines):
     spring_list = []
     for line in lines:
         springs, records = line.split(maxsplit=1)
-        spring_list.append((list(springs), [int(x) for x in records.split(',')]))
+        spring_list.append((springs, tuple(int(x) for x in records.split(','))))
     return spring_list
 
 
@@ -33,7 +33,7 @@ def is_valid(l1: List[int], l2: List[int]) -> bool:
     return len(l1) == len(l2) and all(i == j for i, j in zip(l1, l2))
 
 
-def is_valid_part(l1: List[int], l2: List[int]) -> bool:
+def is_valid_part(l1: List[int], l2: List[int]) -> Tuple[bool, bool]:
     if len(l1) == 0:
         return True, True
     for i, j in zip(l1[:-1], l2[:-1]):
@@ -48,20 +48,18 @@ def is_valid_part(l1: List[int], l2: List[int]) -> bool:
 def dfs(springs, records, possibilities):
     if '?' not in springs:
         if is_valid(gen_record(springs), records):
-            # print("".join(springs))
             possibilities += 1
         return possibilities
-    rec_new = gen_record(springs)
     part_valid, sub_complete = is_valid_part(gen_record(springs), records)
     if not part_valid:
-         return 0
+        return 0
     idx = springs.index('?')
     spring_tmp = springs
     springs = springs[:idx] + '#' + springs[idx + 1:]
     ret1 = dfs(springs, records, possibilities)
     springs = spring_tmp
     springs = springs[:idx] + '.' + springs[idx + 1:]
-    rec_new = gen_record(springs[:idx+1])
+    rec_new = gen_record(springs[:idx + 1])
     part_valid, sub_complete = is_valid_part(rec_new, records)
     if not part_valid:
         return 0
@@ -75,21 +73,18 @@ def dfs(springs, records, possibilities):
 
 
 def part_1(spring_list):
-    sum = 0
-    for springs, record in spring_list:
-        sum += dfs(''.join(springs), tuple(record),0)
-    return sum
+    return sum(dfs(springs, record, 0) for springs, record in spring_list)
 
 
 def part_2(spring_list):
-    sum = 0
+    folded_spring_list = []
     for springs, record in spring_list:
-        folded_springs = springs.copy()
+        folded_springs = list(springs)
         for _ in range(4):
             folded_springs += ["?"]
             folded_springs += springs
-        sum +=  dfs(''.join(folded_springs), tuple(record * 5), 0)
-    return sum
+        folded_spring_list.append((''.join(folded_springs), tuple(list(record) * 5)))
+    return part_1(folded_spring_list)
 
 
 def main():
