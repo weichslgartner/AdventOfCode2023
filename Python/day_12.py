@@ -3,8 +3,6 @@ from typing import List
 
 from aoc import get_lines
 
-records = None
-
 
 def parse_input(lines):
     spring_list = []
@@ -46,7 +44,7 @@ def is_valid_part(l1: List[int], l2: List[int]) -> bool:
     return l1[-1] <= l2[len(l1) - 1], l1[-1] == l2[len(l1) - 1]
 
 
-@functools.lru_cache(10000)
+@functools.cache
 def dfs(springs, records, possibilities):
     if '?' not in springs:
         if is_valid(gen_record(springs), records):
@@ -62,46 +60,42 @@ def dfs(springs, records, possibilities):
     springs = springs[:idx] + '#' + springs[idx + 1:]
     ret1 = dfs(springs, records, possibilities)
     springs = spring_tmp
-    springs = '.' + springs[idx + 1:]
-    rec_new = gen_record(springs[:idx])
+    springs = springs[:idx] + '.' + springs[idx + 1:]
+    rec_new = gen_record(springs[:idx+1])
     part_valid, sub_complete = is_valid_part(rec_new, records)
     if not part_valid:
         return 0
-    rec = list(records)[len(rec_new):]
-    rec = tuple(rec)
-    ret2 = dfs(springs, rec, possibilities)
+    if sub_complete:
+        rec = list(records)[len(rec_new):]
+        rec = tuple(rec)
+        ret2 = dfs(springs[idx:], rec, possibilities)
+    else:
+        ret2 = dfs(springs, records, possibilities)
     return ret1 + ret2
 
 
 def part_1(spring_list):
     sum = 0
     for springs, record in spring_list:
-        poss = [0]
-        p = dfs(springs, record, poss)
-        sum += poss[0]
+        sum += dfs(''.join(springs), tuple(record),0)
     return sum
 
 
 def part_2(spring_list):
     sum = 0
     for springs, record in spring_list:
-        visited = set()
         folded_springs = springs.copy()
         for _ in range(4):
             folded_springs += ["?"]
             folded_springs += springs
-        # print(''.join(folded_springs), record * 5)
-
-        p = dfs(''.join(folded_springs), tuple(record * 5), 0)
-        print(f" {p}")
-        sum += p
+        sum +=  dfs(''.join(folded_springs), tuple(record * 5), 0)
     return sum
 
 
 def main():
-    lines = get_lines("input_12_test.txt")
+    lines = get_lines("input_12.txt")
     spring_list = parse_input(lines)
-    # print("Part 1:", part_1(spring_list))
+    print("Part 1:", part_1(spring_list))
     print("Part 2:", part_2(spring_list))
 
 
