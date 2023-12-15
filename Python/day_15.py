@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import reduce
-from typing import List, Tuple
+from typing import List
 
 from Python.aoc import input_as_str
 
@@ -27,25 +27,28 @@ def part_1(input_str: str) -> int:
 
 
 def part_2(input_str: str) -> int:
-    vec = [[] for _ in range(256)]
+    vec: List[List[Lens]] = [[] for _ in range(256)]
     for s in input_str.split(','):
         if '=' in s:
-            label, focal = s.split('=',1)
-            idx = aoc_hash(label)
+            focal, idx, label, same_label_idx = split_and_get_index(s, vec, sep='=')
             lens = Lens(label, int(focal))
-            same_label_idx = next((i for i, x in enumerate(vec[idx]) if x.label == lens.label), None)
             if same_label_idx is not None:
                 vec[idx][same_label_idx] = lens
             else:
                 vec[idx].append(lens)
         else:
-            label, _ = s.split('-',1)
-            idx = aoc_hash(label)
-            same_label_idx = next((i for i, x in enumerate(vec[idx]) if x.label == label), None)
+            _, idx, label, same_label_idx = split_and_get_index(s, vec, sep='-')
             if same_label_idx is not None:
                 vec[idx].pop(same_label_idx)
 
     return focus_power(vec)
+
+
+def split_and_get_index(s: str, vec: List[List[Lens]], sep: str) -> (int, int, str, int):
+    label, focal = s.split(sep, 1)
+    idx = aoc_hash(label)
+    same_label_idx = next((i for i, x in enumerate(vec[idx]) if x.label == label), None)
+    return focal, idx, label, same_label_idx
 
 
 def main():
