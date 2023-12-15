@@ -15,6 +15,13 @@ def aoc_hash(x: str) -> int:
     return reduce(lambda accu, c: (accu + ord(c)) * 17 % 256, x, 0)
 
 
+def split_and_get_index(s: str, vec: List[List[Lens]], sep: str) -> (int, int, str, int):
+    label, focal = s.split(sep, 1)
+    idx = aoc_hash(label)
+    same_label_idx = next((i for i, x in enumerate(vec[idx]) if x.label == label), None)
+    return focal, idx, label, same_label_idx
+
+
 def focus_power(vec: List[List[Lens]]) -> int:
     return sum(
         (box_n + 1) * sum((pos + 1) * lenses.focal for pos, lenses in enumerate(content))
@@ -40,15 +47,7 @@ def part_2(input_str: str) -> int:
             _, idx, label, same_label_idx = split_and_get_index(s, vec, sep='-')
             if same_label_idx is not None:
                 vec[idx].pop(same_label_idx)
-
     return focus_power(vec)
-
-
-def split_and_get_index(s: str, vec: List[List[Lens]], sep: str) -> (int, int, str, int):
-    label, focal = s.split(sep, 1)
-    idx = aoc_hash(label)
-    same_label_idx = next((i for i, x in enumerate(vec[idx]) if x.label == label), None)
-    return focal, idx, label, same_label_idx
 
 
 def main():
