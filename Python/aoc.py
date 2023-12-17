@@ -1,6 +1,6 @@
 import re
 from collections import namedtuple
-from enum import Enum
+from enum import Enum, StrEnum
 from itertools import filterfalse, tee, islice
 from pathlib import Path
 from typing import List, Callable, Iterable, Iterator, Any
@@ -11,11 +11,23 @@ class Point(namedtuple('Point', 'x y')):
         return f'{self.x} {self.y}'
 
 
-class Direction(Enum):
+class Direction(StrEnum):
+    NORTH = "^"
+    WEST = "<"
+    EAST = ">"
+    SOUTH = "v"
+
+class DirectionInt(Enum):
     NORTH = 1
     WEST = 2
     EAST = 3
     SOUTH = 4
+def dir_to_str(direction: Direction) -> str:
+    match direction:
+        case Direction.NORTH: return "^"
+        case Direction.SOUTH: return "v"
+        case Direction.EAST: return ">"
+        case Direction.WEST: return "<"
 
 
 def dir_to_point(direction: Direction) -> Point:
@@ -52,8 +64,7 @@ def to_point(p: str, sep=",") -> Point:
 
 
 def get_neighbours_4(p: Point, p_max: Point) -> Iterator[Point]:
-    points = [Point(p.x - 1, p.y), Point(p.x, p.y - 1), Point(p.x + 1, p.y), Point(p.x, p.y + 1)][
-        Point(p.x - 1, p.y), Point(p.x, p.y - 1), Point(p.x + 1, p.y), Point(p.x, p.y + 1)]
+    points = [Point(p.x - 1, p.y), Point(p.x, p.y - 1), Point(p.x + 1, p.y), Point(p.x, p.y + 1)]
     return filter(lambda x: is_in_grid(x, p_max), points)
 
 
