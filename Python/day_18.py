@@ -51,6 +51,11 @@ def part_2(trenches):
 
 
 def solve(trenches):
+    perim, polygon = create_polygon(trenches)
+    return calc_area(polygon, perim)
+
+
+def create_polygon(trenches):
     start = Point(0, 0)
     polygon = [start]
     perim = 0
@@ -59,7 +64,7 @@ def solve(trenches):
         perim += trench.len
         dp = dir_to_point(trench.dir)
         polygon.append(Point(l.x + dp.x * trench.len, l.y + dp.y * trench.len))
-    return calc_area(polygon, perim)
+    return perim, polygon
 
 
 def calc_area(polygon, perim):
