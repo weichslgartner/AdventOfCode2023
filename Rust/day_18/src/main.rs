@@ -86,14 +86,15 @@ fn create_polygon(trenches: &[Trench]) -> (u128, Vec<Point>) {
 fn calc_area(perim: u128, polygon: Vec<Point>) -> u128 {
     (polygon
         .windows(2)
-        .map(|pair| (pair[0].x * pair[1].y - pair[0].y * pair[1].x) as u128)
-        .sum::<u128>()
+        .map(|pair| (pair[0].x * pair[1].y - pair[0].y * pair[1].x) as i128)
+        .sum::<i128>()
+        .unsigned_abs()
         / 2
         + (perim / 2))
         + 1
 }
 
-fn solve(trenches: &Vec<Trench>) -> u128 {
+fn solve(trenches: &[Trench]) -> u128 {
     let (perim, polygon) = create_polygon(trenches);
     calc_area(perim, polygon)
 }
