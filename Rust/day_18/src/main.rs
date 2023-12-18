@@ -107,7 +107,7 @@ fn part_2(trenches: &[(Trench, Trench)]) -> u128 {
 }
 
 fn main() {
-    let input = include_str!("../../../inputs/input_18_test.txt");
+    let input = include_str!("../../../inputs/input_18.txt");
     let trenches = parse_input(input);
     println!("Part 1: {}", part_1(&trenches));
     println!("Part 2: {}", part_2(&trenches));
