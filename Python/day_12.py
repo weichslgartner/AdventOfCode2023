@@ -47,15 +47,19 @@ def is_valid_part(l1: List[int], l2: List[int]) -> Tuple[bool, bool]:
 @functools.cache
 def dfs(springs, records, possibilities):
     if '?' not in springs:
-        if is_valid(gen_record(springs), records):
-            possibilities += 1
-        return possibilities
+        return possibilities+1 if is_valid(gen_record(springs), records) else possibilities
     part_valid, sub_complete = is_valid_part(gen_record(springs), records)
     if not part_valid:
         return 0
     idx = springs.index('?')
     spring_tmp = springs
     springs = springs[:idx] + '#' + springs[idx + 1:]
+    # rec_new = gen_record(springs)
+    # part_valid, sub_complete = is_valid_part(rec_new, records)
+    # if sub_complete and '.' in springs:
+    #     idx2 = springs.index('.')
+    #     ret1 = dfs(springs[idx2:], tuple(list(records)[len(rec_new):]), possibilities)
+    # else:
     ret1 = dfs(springs, records, possibilities)
     springs = spring_tmp
     springs = springs[:idx] + '.' + springs[idx + 1:]
@@ -64,19 +68,13 @@ def dfs(springs, records, possibilities):
     if not part_valid:
         return 0
     if sub_complete:
-        rec = list(records)[len(rec_new):]
-        rec = tuple(rec)
-        ret2 = dfs(springs[idx:], rec, possibilities)
+        ret2 = dfs(springs[idx:], tuple(list(records)[len(rec_new):]), possibilities)
     else:
         ret2 = dfs(springs, records, possibilities)
     return ret1 + ret2
 
 
-def part_1(spring_list):
-    return sum(dfs(springs, record, 0) for springs, record in spring_list)
-
-
-def part_2(spring_list):
+def expand(spring_list):
     folded_spring_list = []
     for springs, record in spring_list:
         folded_springs = list(springs)
@@ -84,6 +82,15 @@ def part_2(spring_list):
             folded_springs += ["?"]
             folded_springs += springs
         folded_spring_list.append((''.join(folded_springs), tuple(list(record) * 5)))
+    return folded_spring_list
+
+
+def part_1(spring_list):
+    return sum(dfs(springs, record, 0) for springs, record in spring_list)
+
+
+def part_2(spring_list):
+    folded_spring_list = expand(spring_list)
     return part_1(folded_spring_list)
 
 

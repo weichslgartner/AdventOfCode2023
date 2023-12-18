@@ -57,7 +57,7 @@ fn get_neighbours_4(p: Point, max_p: Point) -> Vec<Point> {
 }
 
 fn point_to_dir(diff_p: Point) -> char {
-    match (diff_p.x as i64, diff_p.y as i64) {
+    match (diff_p.x, diff_p.y) {
         (-1, 0) => '<',
         (1, 0) => '>',
         (0, -1) => '^',
@@ -67,21 +67,11 @@ fn point_to_dir(diff_p: Point) -> char {
 }
 
 fn manhattan_distance(p1: Point, p2: Point) -> usize {
-    ((p1.x as isize - p2.x as isize).abs() + (p1.y as isize - p2.y as isize).abs()) as usize
+    ((p1.x - p2.x).abs() + (p1.y - p2.y).abs()) as usize
 }
 
-fn same_in_the_end(s: &str) -> usize {
-    let mut nums: usize = 0;
-    let mut stack = vec![];
-    for c in s.chars().rev() {
-        if stack.is_empty() || stack.last().unwrap() == &c {
-            stack.push(c);
-            nums += 1;
-        } else {
-            break;
-        }
-    }
-    nums
+fn count_end_chars(s: &str) -> usize {
+    s.chars().rev().take_while(|&c| s.ends_with(c)).count()
 }
 
 fn solve(grid: &Vec<Vec<usize>>, start: Point, max_len: usize, min_len: usize) -> usize {
@@ -106,7 +96,7 @@ fn solve(grid: &Vec<Vec<usize>>, start: Point, max_len: usize, min_len: usize) -
 
     while let Some(el) = queue.pop() {
         if target == el.p && el.heat_loss <= min_dist {
-            if same_in_the_end(&el.dirs) < min_len {
+            if count_end_chars(&el.dirs) < min_len {
                 continue;
             }
             min_dist = el.heat_loss;
@@ -116,9 +106,7 @@ fn solve(grid: &Vec<Vec<usize>>, start: Point, max_len: usize, min_len: usize) -
         if el.heat_loss > min_dist {
             continue;
         }
-
-        let ns = get_neighbours_4(el.p, max_p);
-        for n in ns {
+        for n in get_neighbours_4(el.p, max_p) {
             if n == el.from {
                 continue;
             }
@@ -139,26 +127,23 @@ fn solve(grid: &Vec<Vec<usize>>, start: Point, max_len: usize, min_len: usize) -
             } else {
                 el.dirs.clone() + &d.to_string()
             };
-            if same_in_the_end(&el.dirs) < min_len
+            if count_end_chars(&el.dirs) < min_len
                 && !el.dirs.is_empty()
                 && el.dirs.chars().last().unwrap() != d
             {
                 continue;
             }
-            if visited.get(&(n, new_dirs.clone())).map_or(true, |&v| {
-                v > el.heat_loss + grid[n.y as usize][n.x as usize]
-            }) {
-                visited.insert(
-                    (n, new_dirs.clone()),
-                    el.heat_loss + grid[n.y as usize][n.x as usize],
-                );
+            let cur_heat = el.heat_loss + grid[n.y as usize][n.x as usize];
+            if visited
+                .get(&(n, new_dirs.clone()))
+                .map_or(true, |&v| v > cur_heat)
+            {
+                visited.insert((n, new_dirs.clone()), cur_heat);
                 queue.push(Element {
-                    dist: manhattan_distance(n, target)
-                        + el.heat_loss
-                        + grid[n.y as usize][n.x as usize],
+                    dist: manhattan_distance(n, target) + cur_heat,
                     p: n,
                     dirs: new_dirs.clone(),
-                    heat_loss: el.heat_loss + grid[n.y as usize][n.x as usize],
+                    heat_loss: cur_heat,
                     from: el.p,
                 });
             }
