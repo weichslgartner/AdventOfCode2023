@@ -17,17 +17,24 @@ class Direction(StrEnum):
     EAST = ">"
     SOUTH = "v"
 
+
 class DirectionInt(Enum):
     NORTH = 1
     WEST = 2
     EAST = 3
     SOUTH = 4
+
+
 def dir_to_str(direction: Direction) -> str:
     match direction:
-        case Direction.NORTH: return "^"
-        case Direction.SOUTH: return "v"
-        case Direction.EAST: return ">"
-        case Direction.WEST: return "<"
+        case Direction.NORTH:
+            return "^"
+        case Direction.SOUTH:
+            return "v"
+        case Direction.EAST:
+            return ">"
+        case Direction.WEST:
+            return "<"
 
 
 def dir_to_point(direction: Direction) -> Point:
