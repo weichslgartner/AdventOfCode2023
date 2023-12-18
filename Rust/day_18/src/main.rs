@@ -100,11 +100,11 @@ fn solve(trenches: &[Trench]) -> u128 {
 }
 
 fn part_1(trenches: &[(Trench, Trench)]) -> u128 {
-    solve(&trenches.iter().map(|(t, _)| *t).collect())
+    solve(&trenches.iter().map(|(t, _)| *t).collect::<Vec<Trench>>())
 }
 
 fn part_2(trenches: &[(Trench, Trench)]) -> u128 {
-    solve(&trenches.iter().map(|(_, t)| *t).collect())
+    solve(&trenches.iter().map(|(_, t)| *t).collect::<Vec<Trench>>())
 }
 
 fn main() {
