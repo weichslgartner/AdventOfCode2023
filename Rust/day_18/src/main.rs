@@ -1,9 +1,7 @@
-use std::fmt;
-
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 struct Point {
-    x: i32,
-    y: i32,
+    x: i64,
+    y: i64,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
@@ -32,12 +30,6 @@ struct Trench {
     len: usize,
 }
 
-impl fmt::Display for Trench {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?} {}", self.dir, self.len)
-    }
-}
-
 fn parse_input(input: &str) -> Vec<(Trench, Trench)> {
     input
         .lines()
@@ -46,7 +38,6 @@ fn parse_input(input: &str) -> Vec<(Trench, Trench)> {
             let d = Dir::from_char(parts[0].chars().next().unwrap()).unwrap();
             let l = parts[1].parse().unwrap();
             let c = parts[2].trim();
-            //println!{"{}",u32::from_str_radix(&c[2..c.len() - 2], 16).unwrap()};
             (
                 Trench { dir: d, len: l },
                 Trench {
@@ -68,7 +59,7 @@ fn hex_to_dir(c: char) -> Dir {
     }
 }
 
-fn create_polygon(trenches: &Vec<Trench>) -> (usize, Vec<Point>) {
+fn create_polygon(trenches: &[Trench]) -> (u128, Vec<Point>) {
     trenches.iter().fold(
         (0, vec![Point { x: 0, y: 0 }]),
         |(mut acc_perim, mut acc_polygon), trench| {
@@ -80,11 +71,11 @@ fn create_polygon(trenches: &Vec<Trench>) -> (usize, Vec<Point>) {
             };
 
             let new_point = Point {
-                x: acc_polygon.last().unwrap().x + dp.x * trench.len as i32,
-                y: acc_polygon.last().unwrap().y + dp.y * trench.len as i32,
+                x: acc_polygon.last().unwrap().x + dp.x * trench.len as i64,
+                y: acc_polygon.last().unwrap().y + dp.y * trench.len as i64,
             };
 
-            acc_perim += trench.len;
+            acc_perim += trench.len as u128;
             acc_polygon.push(new_point);
 
             (acc_perim, acc_polygon)
@@ -92,32 +83,32 @@ fn create_polygon(trenches: &Vec<Trench>) -> (usize, Vec<Point>) {
     )
 }
 
-fn calc_area(perim: usize, polygon: Vec<Point>) -> u128 {
+fn calc_area(perim: u128, polygon: Vec<Point>) -> u128 {
     (polygon
         .windows(2)
         .map(|pair| (pair[0].x * pair[1].y - pair[0].y * pair[1].x) as u128)
         .sum::<u128>()
         / 2
-        + (perim / 2) as u128)
+        + (perim / 2))
         + 1
 }
 
 fn solve(trenches: &Vec<Trench>) -> u128 {
-    let (perim, polygon) = create_polygon(&trenches);
+    let (perim, polygon) = create_polygon(trenches);
     calc_area(perim, polygon)
 }
 
-fn part_1(trenches: &Vec<(Trench, Trench)>) -> u128 {
+fn part_1(trenches: &[(Trench, Trench)]) -> u128 {
     solve(&trenches.iter().map(|(t, _)| *t).collect())
 }
 
-fn part_2(trenches: &Vec<(Trench, Trench)>) -> u128 {
+fn part_2(trenches: &[(Trench, Trench)]) -> u128 {
     solve(&trenches.iter().map(|(_, t)| *t).collect())
 }
 
 fn main() {
-    let input = include_str!("../../../inputs/input_18.txt");
-    let trenches = parse_input(&input);
+    let input = include_str!("../../../inputs/input_18_test.txt");
+    let trenches = parse_input(input);
     println!("Part 1: {}", part_1(&trenches));
     println!("Part 2: {}", part_2(&trenches));
 }
