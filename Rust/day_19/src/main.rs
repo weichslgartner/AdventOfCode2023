@@ -42,7 +42,9 @@ fn cmp_negate_corr(c: char) -> i32 {
     }
 }
 
-fn parse_input(in_str: &str) -> (HashMap<String, Vec<Rule>>, Vec<HashMap<String, i32>>) {
+struct ParseInputResult(HashMap<String, Vec<Rule>>, Vec<HashMap<String, i32>>);
+
+fn parse_input(in_str: &str) -> ParseInputResult {
     let mut rules = HashMap::new();
     let mut workflows_parts = in_str.split("\n\n");
     let workflows_str = workflows_parts.next().unwrap();
@@ -54,7 +56,7 @@ fn parse_input(in_str: &str) -> (HashMap<String, Vec<Rule>>, Vec<HashMap<String,
         let rest = iter.next().unwrap();
         let mut rules_group = Vec::new();
 
-        for group in rest.replace("}", "").split(',') {
+        for group in rest.replace('}', "").split(',') {
             if group.contains('>') {
                 rules_group.push(extract_comparison(group, ">"));
             } else if group.contains('<') {
@@ -89,7 +91,7 @@ fn parse_input(in_str: &str) -> (HashMap<String, Vec<Rule>>, Vec<HashMap<String,
         p_ratings.push(ratings);
     }
 
-    (rules, p_ratings)
+    ParseInputResult(rules, p_ratings)
 }
 
 fn extract_comparison(group: &str, comp: &str) -> Rule {
@@ -131,7 +133,7 @@ fn chain_eval(pr: &HashMap<String, i32>, rules: &HashMap<String, Vec<Rule>>) -> 
     }
 }
 
-fn calc_combos(constraints: &Vec<HashMap<String, i32>>) -> i128 {
+fn calc_combos(constraints: &[HashMap<String, i32>]) -> i128 {
     constraints.iter().map(comb_per_constr).sum()
 }
 
@@ -172,7 +174,7 @@ fn forward_calc(
     }
 }
 
-fn part_1(rules: &HashMap<String, Vec<Rule>>, p_ratings: &Vec<HashMap<String, i32>>) -> i32 {
+fn part_1(rules: &HashMap<String, Vec<Rule>>, p_ratings: &[HashMap<String, i32>]) -> i32 {
     p_ratings.iter().map(|pr| chain_eval(pr, rules)).sum()
 }
 
@@ -194,7 +196,7 @@ fn constraints_dict() -> HashMap<String, i32> {
 
 fn main() {
     let input = include_str!("../../../inputs/input_19.txt");
-    let (rules, p_ratings) = parse_input(input);
+    let ParseInputResult(rules, p_ratings) = parse_input(input);
     println!("Part 1: {}", part_1(&rules, &p_ratings));
     println!("Part 2: {}", part_2(&rules));
 }
