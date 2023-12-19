@@ -24,8 +24,23 @@ class Rule:
 
 
 def parse_input(in_str: str) -> Tuple[Dict[str, List[Rule]], List[Dict[str, int]]]:
-    rules = dict()
     workflows_str, parts_str = in_str.split("\n\n", 1)
+    return parse_rules(workflows_str), parse_ratings(parts_str)
+
+
+def parse_ratings(parts_str: str) -> List[Dict]:
+    p_ratings = []
+    for p in parts_str.split("\n"):
+        ratings = {}
+        for group in p.strip("{}" + string.whitespace).split(","):
+            part, rating = group.split("=", 1)
+            ratings[part] = int(rating)
+        p_ratings.append(ratings)
+    return p_ratings
+
+
+def parse_rules(workflows_str: str) -> Dict[str, List[Rule]]:
+    rules = dict()
     for w in workflows_str.split("\n"):
         name, rest = w.split("{", 1)
         rules_group = []
@@ -38,14 +53,7 @@ def parse_input(in_str: str) -> Tuple[Dict[str, List[Rule]], List[Dict[str, int]
                 r = Rule(result=group)
             rules_group.append(r)
         rules[name] = rules_group
-    p_ratings = []
-    for p in parts_str.split("\n"):
-        ratings = {}
-        for group in p.strip("{}" + string.whitespace).split(","):
-            part, rating = group.split("=", 1)
-            ratings[part] = int(rating)
-        p_ratings.append(ratings)
-    return rules, p_ratings
+    return rules
 
 
 def extract_comparison(group: str, comp: str = ">") -> Rule:
