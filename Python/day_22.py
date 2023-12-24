@@ -69,7 +69,7 @@ def part_b(rests_list, supported_by, critical_shapes):
                     overall +=1
                     next_q.add(r)
             queue,next_q = next_q,set()
-
+        print(overall)
     return overall
 
 
@@ -109,7 +109,7 @@ def part_2(lines):
 
 
 def main():
-    lines = get_lines("input_22.txt")
+    lines = get_lines("input_22_test.txt")
     shapes = parse_input(lines)
     p1,p2 = part_1(shapes)
     print("Part 1:", p1)
