@@ -38,7 +38,6 @@ def block_rests(rest_set, shape, top, id_) -> bool:
                 max_p = top[i][shape[0].x][0]
                 laying_on.clear()
                 laying_on[top[i][shape[0].x][1]].add(id_)
-            # laying_on[top[i][shape[0].x][1]].add(id_)
             elif top[i][shape[0].x][0] == max_p:
                 laying_on[top[i][shape[0].x][1]].add(id_)
         for i in range(shape[0].y, shape[1].y + 1):
