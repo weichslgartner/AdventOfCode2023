@@ -1,57 +1,34 @@
 from collections import defaultdict
 from math import prod
+from typing import List
 
 import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.algorithms.community import kernighan_lin_bisection
+from networkx import minimum_edge_cut
 
 from aoc import get_lines
 
-def draw_graph(graph_dict):
-    # Create a directed graph from the dictionary
-    G = nx.DiGraph(graph_dict)
 
-    # Draw the graph
-    pos = nx.spring_layout(G)  # You can choose a different layout if needed
-    nx.draw(G, pos, with_labels=True, font_weight='bold', node_size=700, node_color='skyblue', arrowsize=15)
-
-    # Display the graph
+def draw_graph(graph: nx.Graph) -> None:
+    pos = nx.spring_layout(graph)
+    nx.draw(graph, pos, with_labels=True, font_weight='bold', node_size=700, node_color='skyblue', arrowsize=15)
     plt.show()
 
-def parse_input(lines):
+
+def parse_input(lines: List[str]) -> nx.Graph:
     graph = defaultdict(list)
     for line in lines:
-        src, dst = line.split(":",1)
+        src, dst = line.split(":", 1)
         graph[src] += dst.split()
-        for n in graph[src]:
-            graph[n].append(src)
-   # draw_graph(graph)
-
     return nx.Graph(graph)
 
 
-def part_1(graph: nx.Graph):
-    #draw_graph(graph)
-    remove_real_input_edges(graph)
-    # draw_graph(graph)
-    comps = list(nx.connected_components(graph))
-    #print(comps)
-    #res = kernighan_lin_bisection(graph, partition=None, max_iter=10, weight=None, seed=None)
-    #print(res)
-    return prod(map(len,comps))
+def part_1(graph: nx.Graph) -> int:
+    graph.remove_edges_from(minimum_edge_cut(graph))
+    return prod(map(len, nx.connected_components(graph)))
 
 
-def remove_example_edges(graph):
-    graph.remove_edge("hfx", "pzl")
-    graph.remove_edge("bvb", "cmg")
-    graph.remove_edge("nvd", "jqt")
-
-def remove_real_input_edges(graph):
-    graph.remove_edge("fts", "nvb")
-    graph.remove_edge("qmr", "kzx")
-    graph.remove_edge("zns", "jff")
-
-def part_2(lines):
+def part_2(_):
     pass
 
 
