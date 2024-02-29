@@ -1,26 +1,20 @@
 from itertools import combinations
 
 import numpy as np
-from z3 import Solver, BitVec, BitVecs, BitVecVal, Real, RealVal, Reals, sat
+from z3 import Solver, Real, Reals, sat
 
 from aoc import get_lines
 
 
 def parse_input(lines):
-    point_vec = []
-    for line in lines:
-        point, vec = line.split("@", 1)
-        point_vec.append((np.array([int(i.strip()) for i in point.split(",")]),
-                          np.array([int(i.strip()) for i in vec.split(",")])))
-    return point_vec
+    return [(np.array([int(i.strip()) for i in point.split(",")]),
+             np.array([int(i.strip()) for i in vec.split(",")])) for point, vec in
+            map(lambda line: line.split("@", 1), lines)]
 
 
 def find_intersection(point1, vec1, point2, vec2):
-    point1, vec1, point2, vec2 = point1.T, vec1.T, point2.T, vec2.T
-    x, err, rank = np.linalg.lstsq(np.array([vec1, -vec2]).T, point2 - point1, rcond=None)[:3]
-    if rank == 2:
-        return vec1 * x[0] + point1
-    return None
+    x, _, rank = np.linalg.lstsq(np.column_stack([vec1, -vec2]), point2 - point1, rcond=None)[:3]
+    return point1 + vec1 * x[0] if rank == 2 else None
 
 
 def part_1(point_vecs, min_p=200000000000000, max_p=400000000000000):
